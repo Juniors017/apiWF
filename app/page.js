@@ -10,37 +10,21 @@ export default function Home() {
   useEffect(() => {
     async function loadPhotos() {
       try {
-        // 1. D'abord, essayer de charger le fichier JSON local
+        // Tentative de charger le fichier JSON local
         const res = await fetch('/photos-data.json');
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-
-        // 2. Vérifier la structure (l'API renvoie un objet avec une propriété "photos")
-        // highlight-next-line
-        if (data && Array.isArray(data.photos)) {
-          setPhotos(data.photos);
-        } else if (Array.isArray(data)) {
-          // fallback si la structure était différente (ancienne API)
-          setPhotos(data);
-        } else {
-          throw new Error('Structure de données inattendue');
-        }
+        // L'API Picsum renvoie directement un tableau
+        setPhotos(data);
       } catch (err) {
-        console.warn('Fichier JSON non trouvé, fallback vers l’API directe', err);
+        console.warn('Fichier JSON non trouvé, fallback vers API Picsum', err);
         try {
-          // 3. Fallback : appeler directement l'API
-          // highlight-next-line
-          const res = await fetch('https://api.slingacademy.com/v1/sample-data/photos?offset=10&limit=20');
+          const res = await fetch('https://picsum.photos/v2/list?page=2&limit=20');
           if (!res.ok) throw new Error(`API HTTP ${res.status}`);
           const data = await res.json();
-          // highlight-next-line
-          if (data && Array.isArray(data.photos)) {
-            setPhotos(data.photos);
-          } else {
-            throw new Error('Structure de données inattendue');
-          }
+          setPhotos(data);
         } catch (apiErr) {
-          setError('Impossible de charger les photos. Veuillez réessayer plus tard.');
+          setError('Impossible de charger les photos.');
           console.error(apiErr);
         }
       } finally {
@@ -65,7 +49,7 @@ export default function Home() {
 
   return (
     <main style={{ padding: '2rem' }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '2rem' }}>📸 Galerie de photos (Sling Academy)</h1>
+      <h1 style={{ textAlign: 'center', marginBottom: '2rem' }}>📸 Galerie de photos (Lorem Picsum)</h1>
       <div
         style={{
           display: 'grid',
@@ -84,30 +68,29 @@ export default function Home() {
               boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
             }}
           >
-            {/* highlight-next-line */}
             <img
-              src={photo.url}
-              alt={photo.title}
+              src={`https://picsum.photos/id/${photo.id}/300/200`}
+              alt={`Photo by ${photo.author}`}
               style={{
                 width: '100%',
-                height: '180px',
+                height: '200px',
                 objectFit: 'cover',
                 display: 'block',
               }}
               onError={(e) => {
                 e.target.onerror = null;
-                e.target.src = 'https://placehold.co/400x200?text=Image+introuvable';
+                e.target.src = 'https://placehold.co/300x200?text=Image+manquante';
               }}
             />
             <div style={{ padding: '0.75rem' }}>
-              <h2 style={{ fontSize: '1rem', margin: '0 0 0.25rem 0' }}>{photo.title}</h2>
-              {/* highlight-next-line */}
-              <p style={{ fontSize: '0.75rem', color: '#555', margin: '0 0 0.5rem 0' }}>
-                Utilisateur {photo.user}
+              <p style={{ fontSize: '0.9rem', margin: '0 0 0.25rem 0' }}>
+                Auteur : {photo.author}
               </p>
-              <p style={{ fontSize: '0.85rem', margin: '0 0 0.5rem 0' }}>{photo.description}</p>
+              <p style={{ fontSize: '0.75rem', color: '#555', margin: '0 0 0.5rem 0' }}>
+                Photo ID: {photo.id}
+              </p>
               <a
-                href={photo.url}
+                href={photo.download_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{ fontSize: '0.8rem', color: '#0066cc' }}

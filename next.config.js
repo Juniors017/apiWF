@@ -1,4 +1,3 @@
-// next.config.js
 const isProd = process.env.NODE_ENV === 'production';
 const repoName = 'apiWF';
 
@@ -8,7 +7,6 @@ const nextConfig = {
   images: { unoptimized: true },
   ...(isProd && { basePath: `/${repoName}`, assetPrefix: `/${repoName}` }),
   trailingSlash: true,
-  // Autoriser l'accès depuis l'IP locale en dev (optionnel)
   allowedDevOrigins: ['192.168.1.19'],
 };
 

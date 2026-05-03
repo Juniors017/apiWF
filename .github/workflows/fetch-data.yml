@@ -1,25 +1,27 @@
-name: "Récupérer les photos"
+name: "Récupérer les photos (Picsum)"
 
 on:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 0 * * *"   # tous les jours à minuit UTC
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  fetch:
+  fetch-and-commit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Créer le dossier public
-        run: mkdir -p public
-      - name: Récupérer les photos avec curl
-        # highlight-next-line
-        run: curl -o public/photos-data.json "https://api.slingacademy.com/v1/sample-data/photos?offset=10&limit=20"
-      - name: Committer le fichier
+      - name: "Cloner le dépôt"
+        uses: actions/checkout@v4
+
+      - name: "Créer le dossier public et récupérer les données"
+        run: |
+          mkdir -p public
+          curl -o public/photos-data.json "https://picsum.photos/v2/list?page=2&limit=20"
+
+      - name: "Pousser les données vers le dépôt"
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Mise à jour auto des photos"
+          commit_message: "Mise à jour automatique des photos (Picsum)"
           file_pattern: "public/photos-data.json"
