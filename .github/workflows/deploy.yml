@@ -26,7 +26,7 @@ jobs:
       - name: Récupérer les photos (Picsum)
         run: |
           mkdir -p public
-          curl -o public/photos-data.json "https://picsum.photos/v2/list?page=2&limit=20"
+          curl -o public/photos-data.json "https://picsum.photos/v2/list?page=32&limit=70"
 
       - name: Installer les dépendances
         run: npm ci
