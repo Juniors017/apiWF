@@ -1,4 +1,4 @@
-name: "Récupérer les données de l'API Photos"
+name: "Récupérer les photos"
 
 on:
   schedule:
@@ -9,19 +9,17 @@ permissions:
   contents: write
 
 jobs:
-  fetch-and-commit:
+  fetch:
     runs-on: ubuntu-latest
     steps:
-      - name: "Cloner le dépôt"
-        uses: actions/checkout@v4
-
-      - name: "Créer le dossier public (si nécessaire) et récupérer les données"
-        run: |
-          mkdir -p public
-          curl -s -o public/photos-data.json https://jsonplaceholder.typicode.com/albums/1/photos
-
-      - name: "Pousser les données vers le dépôt"
+      - uses: actions/checkout@v4
+      - name: Créer le dossier public
+        run: mkdir -p public
+      - name: Récupérer les photos avec curl
+        # highlight-next-line
+        run: curl -o public/photos-data.json "https://api.slingacademy.com/v1/sample-data/photos?offset=10&limit=20"
+      - name: Committer le fichier
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Mise à jour automatique des données photos"
+          commit_message: "Mise à jour auto des photos"
           file_pattern: "public/photos-data.json"

@@ -1,16 +1,17 @@
 // next.config.js
-const repoName = 'apiWF'; // Remplacez par le nom exact de votre dépôt GitHub
+const isProd = process.env.NODE_ENV === 'production';
+const repoName = 'apiWF';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
   images: { unoptimized: true },
-  basePath: `/${repoName}`,
-  assetPrefix: `/${repoName}`,
-  trailingSlash: true, // optionnel mais recommandé pour GitHub Pages
+  ...(isProd && { basePath: `/${repoName}`, assetPrefix: `/${repoName}` }),
+  trailingSlash: true,
+  // Autoriser l'accès depuis l'IP locale en dev (optionnel)
+  allowedDevOrigins: ['192.168.1.19'],
 };
 
-module.exports = nextConfig;
 module.exports = {
   output: 'export',
   images: { unoptimized: true },
