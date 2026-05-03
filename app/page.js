@@ -5,21 +5,38 @@ import { useState, useEffect } from 'react';
 export default function Home() {
   const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('/photos-data.json')
-      .then(res => res.json())
-      .then(data => {
+    async function loadPhotos() {
+      try {
+        // Tentative de charger le fichier JSON local (généré par GitHub Actions)
+        const res = await fetch('/photos-data.json');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
         setPhotos(data);
+      } catch (err) {
+        console.warn('Fichier JSON non trouvé, fallback vers l’API directe');
+        try {
+          // Fallback : appel direct à l'API
+          const res = await fetch('https://jsonplaceholder.typicode.com/albums/1/photos');
+          if (!res.ok) throw new Error(`API HTTP ${res.status}`);
+          const data = await res.json();
+          setPhotos(data);
+        } catch (apiErr) {
+          setError('Impossible de charger les photos. Veuillez réessayer plus tard.');
+          console.error(apiErr);
+        }
+      } finally {
         setLoading(false);
-      })
-      .catch(err => {
-        console.error(err);
-        setLoading(false);
-      });
+      }
+    }
+
+    loadPhotos();
   }, []);
 
-  if (loading) return <div>Chargement...</div>;
+  if (loading) return <div style={{ textAlign: 'center', marginTop: '50px' }}>Chargement des photos...</div>;
+  if (error) return <div style={{ textAlign: 'center', marginTop: '50px', color: 'red' }}>{error}</div>;
 
   return (
     <main style={{ padding: '2rem' }}>

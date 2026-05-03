@@ -7,4 +7,26 @@ const nextConfig = {
   },
 }
 
+module.exports = {
+  output: 'export',
+  images: { unoptimized: true },
+  // Pour autoriser les images distantes en dev (optionnel)
+  distDir: '.next',
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: "img-src 'self' https://via.placeholder.com https://placehold.co;",
+          },
+        ],
+      },
+    ];
+  },
+};
+
 module.exports = nextConfig
+
+
