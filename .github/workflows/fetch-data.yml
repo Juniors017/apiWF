@@ -15,7 +15,7 @@ jobs:
       - name: "Cloner le dépôt"
         uses: actions/checkout@v4
 
-      - name: "Récupérer les données avec curl"
+      - name: "Créer le dossier public et récupérer les données avec curl"
         run: |
           mkdir -p public
           curl -o public/photos-data.json https://jsonplaceholder.typicode.com/albums/1/photos
@@ -23,5 +23,5 @@ jobs:
       - name: "Pousser les données vers le dépôt"
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Mise à jour automatique des données photos (actions GitHub)"
+          commit_message: "Mise à jour automatique des données photos"
           file_pattern: "public/photos-data.json"
