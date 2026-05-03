@@ -25,7 +25,7 @@ jobs:
       - name: Récupérer les photos (Picsum)
         run: |
           mkdir -p public
-          curl -o public/photos-data.json "https://picsum.photos/v2/list?page=2&limit=20"
+          curl -o public/photos-data.json "https://picsum.photos/v2/list?page=12&limit=30"
 
       # Étape 2 : installer les dépendances et construire le site
       - name: Installer les dépendances
