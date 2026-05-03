@@ -1,12 +1,16 @@
 // next.config.js
+const repoName = 'apiWF'; // Remplacez par le nom exact de votre dépôt GitHub
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',   // génère un site statique dans le dossier 'out'
-  images: {
-    unoptimized: true, // nécessaire pour l'export statique avec des images externes
-  },
-}
+  output: 'export',
+  images: { unoptimized: true },
+  basePath: `/${repoName}`,
+  assetPrefix: `/${repoName}`,
+  trailingSlash: true, // optionnel mais recommandé pour GitHub Pages
+};
 
+module.exports = nextConfig;
 module.exports = {
   output: 'export',
   images: { unoptimized: true },
@@ -26,6 +30,8 @@ module.exports = {
     ];
   },
 };
+
+
 
 module.exports = nextConfig
 
