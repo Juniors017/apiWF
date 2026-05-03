@@ -15,10 +15,10 @@ jobs:
       - name: "Cloner le dépôt"
         uses: actions/checkout@v4
 
-      - name: "Créer le dossier public et récupérer les données avec curl"
+      - name: "Créer le dossier public (si nécessaire) et récupérer les données"
         run: |
           mkdir -p public
-          curl -o public/photos-data.json https://jsonplaceholder.typicode.com/albums/1/photos
+          curl -s -o public/photos-data.json https://jsonplaceholder.typicode.com/albums/1/photos
 
       - name: "Pousser les données vers le dépôt"
         uses: stefanzweifel/git-auto-commit-action@v5
