@@ -1,0 +1,28 @@
+name: Récupérer les photos de l'API
+
+on:
+  schedule:
+    - cron: '0 0 * * *'   # tous les jours à minuit UTC
+  workflow_dispatch:       # permet un déclenchement manuel
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cloner le dépôt
+        uses: actions/checkout@v4
+
+      - name: Appeler l'API et sauvegarder le JSON
+        uses: JamesIves/fetch-api-data-action@v2
+        with:
+          endpoint: https://jsonplaceholder.typicode.com/albums/1/photos
+          save-location: public/photos-data.json
+
+      - name: Committer et pousser les changements
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'Mise à jour automatique des photos'
+          file_pattern: 'public/photos-data.json'
