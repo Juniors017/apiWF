@@ -1,8 +1,8 @@
-name: Déployer le site statique
+name: "Build & Deploy (avec données fraîches)"
 
 on:
-  push:
-    branches: [main]
+  schedule:
+    - cron: "0 0 * * *"   # tous les jours à minuit
   workflow_dispatch:
 
 permissions:
@@ -11,34 +11,34 @@ permissions:
   id-token: write
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Cloner le dépôt
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Installer Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
+      # Étape 1 : récupérer les données directement dans le dossier public
+      - name: Récupérer les photos (Picsum)
+        run: |
+          mkdir -p public
+          curl -o public/photos-data.json "https://picsum.photos/v2/list?page=2&limit=20"
+
+      # Étape 2 : installer les dépendances et construire le site
       - name: Installer les dépendances
         run: npm ci
 
-      - name: Construire le site (export statique)
-        run: npm run build   # next build + next export sont automatiques avec output:'export'
+      - name: Construire le site
+        run: npm run build   # output:export -> dossier out
 
-      - name: Configurer GitHub Pages
-        uses: actions/configure-pages@v4
-
-      - name: Uploader l'artéfact
+      # Étape 3 : déployer sur GitHub Pages
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: './out'
 
-      - name: Déployer sur GitHub Pages
-        id: deployment
+      - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
